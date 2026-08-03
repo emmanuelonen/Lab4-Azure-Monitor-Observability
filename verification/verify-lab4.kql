@@ -1,0 +1,23 @@
+// ============================================================
+// Lab 4 — Azure Monitor, Log Analytics & KQL Telemetry Architecture
+// Script: KQL Data Ingestion & Pipeline Integrity Verification
+// Emmanuel Onen | Senior Systems Engineer | Cayman Islands | August 2026
+// ============================================================
+
+// ------------------------------------------------------------
+// Verification Query 1: Heartbeat Ingestion Check
+// Confirms that Azure Monitor Agent (AMA) is reporting active
+// heartbeats from onboarded Virtual Machines within the last hour.
+// ------------------------------------------------------------
+Heartbeat
+| where TimeGenerated > ago(1h)
+| summarize LastHeartbeat = max(TimeGenerated) by Computer, OSType, Version;
+
+// ------------------------------------------------------------
+// Verification Query 2: Log Ingestion Latency & Stream Active Check
+// Validates all log tables that received telemetry stream data
+// within the last 30-minute window across the entire workspace.
+// ------------------------------------------------------------
+union withsource=Table *
+| where TimeGenerated > ago(30m)
+| summarize RecordCount = count() by Table;
