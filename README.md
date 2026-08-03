@@ -64,3 +64,62 @@ Without centralised logging and proactive monitoring, silent failures go undetec
 │  [App VM / DC]     [Spoke Network Layer]   [Identity Layer (Lab 3)]     │
 │  Syslog/EventLog   Denied Traffic/IPs      PIM · Sign-ins · Audits      │
 └─────────────────────────────────────────────────────────────────────────┘
+
+## Technical Evidence & Proof of Execution
+
+### Task 1: Provision Central Log Analytics Workspace (LAW)
+Established central telemetry workspace `law-enterprise-monitoring-eastus` in `rg-hub-eastus`.
+![Workspace Creation](screenshots/1a-log-analytics-workspace-creation.jpeg)
+
+---
+
+### Task 2: Data Collection Rule (DCR) & AMA Extension
+Configured `dcr-vm-telemetry` using Azure Monitor Agent to collect System, Security, Application logs, and Performance counters.
+![DCR Configuration](screenshots/2a-data-collection-rule-configuration.jpeg)
+
+---
+
+### Task 3: Cross-Layer Log Integration (Network & Identity)
+Streamed NSG Flow logs (`nsg-spoke-app-eastus`) and Microsoft Entra ID logs (`entra-to-law`) into the workspace.
+![NSG Integration](screenshots/3a-nsg-flow-logs-workspace-integration.jpeg)
+
+---
+
+### Task 4: Production KQL Telemetry Queries
+
+#### Query 1: Failed Entra ID Sign-in Attempts
+```kql
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType != 0
+| summarize FailedCount = count() by UserPrincipalName, IPAddress, ResultDescription, AppDisplayName
+| sort by FailedCount desc
+
+#### Query 2: Denied Network Traffic Telemetry
+NTTFlowLogs
+| where TimeGenerated > ago(12h)
+| where FlowDecision == "D"
+| summarize DeniedPackets = sum(Packets) by SrcIP, DestIP, DestPort, L7Protocol
+| sort by DeniedPackets desc
+
+Task 5: Enterprise Operations Dashboard
+
+Built the Enterprise Cloud Operations & Observability portal dashboard pinning real-time analytical KQL tiles.
+
+Task 6: Metric Alert Rules & Action Groups
+
+Configured alert-high-cpu-utilization (Severity 1) targeting CPU > 85% paired with ag-cloud-ops-team email notification pipeline.
+
+Lab Progression Summary
+
+Lab 1: Active Directory Infrastructure & Identity Core
+
+Lab 2: Azure Hub-and-Spoke Enterprise Networking
+
+Lab 3: Entra ID Governance, PIM & Conditional Access
+
+Lab 4: Centralised Telemetry, KQL, Dashboards & Alerting
+
+Author: Emmanuel Onen | Senior Systems Engineer | Cayman Islands
+
+GitHub Profile: github.com/emmanuelonen
