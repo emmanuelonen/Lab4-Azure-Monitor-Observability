@@ -1,0 +1,25 @@
+// ============================================================
+// Lab 4 — Production KQL Queries
+// Emmanuel Onen | August 2026
+// ============================================================
+
+// Query 1: Failed Entra ID Sign-in Attempts (Security Baseline)
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType != 0
+| summarize FailedCount = count() by UserPrincipalName, IPAddress, ResultDescription, AppDisplayName
+| sort by FailedCount desc;
+
+// Query 2: Denied Network Traffic via NSG Flow Telemetry
+NTTFlowLogs
+| where TimeGenerated > ago(12h)
+| where FlowDecision == "D"
+| summarize DeniedPackets = sum(Packets) by SrcIP, DestIP, DestPort, L7Protocol
+| sort by DeniedPackets desc;
+
+// Query 3: VM CPU Utilisation Threshold Monitoring
+Perf
+| where TimeGenerated > ago(4h)
+| where ObjectName == "Processor" and CounterName == "% Processor Time"
+| summarize AvgCPU = avg(CounterValue) by Computer, bin(TimeGenerated, 15m)
+| render timechart;
