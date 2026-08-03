@@ -54,12 +54,12 @@ Without centralised logging and proactive monitoring, silent failures go undetec
 │  │  Single source of truth — all log streams converge here          │   │
 │  └──────────────────────────────────────────────────────────────────┘   │
 │         ▲                    ▲                    ▲                     │
-│  ┌──────────────┐  ┌──────────────────┐  ┌──────────────────────────┐  │
-│  │ Azure Monitor│  │ Network Watcher  │  │ Entra ID Diagnostics     │  │
-│  │ Agent (AMA)  │  │ NSG Flow Logs    │  │ AuditLogs · SignInLogs   │  │
-│  │ DCR: dcr-vm- │  │ nsg-spoke-app-   │  │ RiskyUsers               │  │
-│  │ telemetry    │  │ eastus           │  │ entra-to-law             │  │
-│  └──────────────┘  └──────────────────┘  └──────────────────────────┘  │
+│  ┌──────────────┐  ┌──────────────────┐  ┌──────────────────────────┐   │
+│  │ Azure Monitor│  │ Network Watcher  │  │ Entra ID Diagnostics     │   │
+│  │ Agent (AMA)  │  │ NSG Flow Logs    │  │ AuditLogs · SignInLogs   │   │
+│  │ DCR: dcr-vm- │  │ nsg-spoke-app-   │  │ RiskyUsers               │   │
+│  │ telemetry    │  │ eastus           │  │ entra-to-law             │   │
+│  └──────────────┘  └──────────────────┘  └──────────────────────────┘   │
 │         ▲                    ▲                    ▲                     │
 │  [App VM / DC]     [Spoke Network Layer]   [Identity Layer (Lab 3)]     │
 │  Syslog/EventLog   Denied Traffic/IPs      PIM · Sign-ins · Audits      │
